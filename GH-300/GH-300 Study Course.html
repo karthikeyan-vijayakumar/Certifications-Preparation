@@ -1,0 +1,654 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>GH-300 Study Course</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: left module rail + one slide stage; narration caption under the slide; fixed control dock at the bottom. */
+:root{
+  --bg:#F2F5F3; --surface:#FFFFFF; --surface2:#E8EEEB; --ink:#0F1A15; --muted:#51605A; --line:#CAD5CF;
+  --accent:#17734A; --accent-ink:#FFFFFF; --accent-soft:#DCF0E5;
+  --warn:#B4400B; --warn-soft:#FBE8DB; --bad:#B42318;
+  --f-display:'Archivo','Arial Narrow',Arial,sans-serif;
+  --f-body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0C1310; --surface:#141E19; --surface2:#1C2923; --ink:#E7EFEA; --muted:#98A9A0; --line:#2C3C34;
+    --accent:#52CF8C; --accent-ink:#06150D; --accent-soft:#17352A; --warn:#F59E5B; --warn-soft:#3A2414; --bad:#F28B82;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0C1310; --surface:#141E19; --surface2:#1C2923; --ink:#E7EFEA; --muted:#98A9A0; --line:#2C3C34;
+  --accent:#52CF8C; --accent-ink:#06150D; --accent-soft:#17352A; --warn:#F59E5B; --warn-soft:#3A2414; --bad:#F28B82;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+h1,h2,h3,h4{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+button,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding-bottom:150px}
+.top{display:flex;gap:16px;align-items:end;justify-content:space-between;flex-wrap:wrap;padding:22px 0 16px}
+.top h1{font-size:clamp(26px,4vw,40px);font-weight:800;line-height:1.05}
+.top p{margin:6px 0 0;color:var(--muted);font-size:14px}
+.meter{min-width:210px;flex:1 1 210px;max-width:320px}
+.meter .lbl{display:flex;justify-content:space-between;font:500 12px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.bar{height:8px;background:var(--surface2);border-radius:99px;margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.shell{display:grid;grid-template-columns:268px minmax(0,1fr);gap:22px;align-items:start}
+nav{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:8px}
+.mod{display:block;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:9px 10px;cursor:pointer;line-height:1.3}
+.mod:hover{background:var(--surface2)}
+.mod .n{font:500 11px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:flex;justify-content:space-between;gap:8px}
+.mod .t{font-weight:600;font-size:14.5px;display:block;margin-top:1px}
+.mod[aria-current="true"]{background:var(--accent-soft)}
+.mod.done .t::after{content:" ✓";color:var(--accent)}
+.subs{margin:2px 0 8px 10px;border-left:2px solid var(--line);padding-left:8px}
+.sub{display:block;width:100%;text-align:left;background:none;border:0;padding:4px 6px;font-size:13px;color:var(--muted);cursor:pointer;border-radius:6px}
+.sub:hover{color:var(--ink);background:var(--surface2)}
+.sub[aria-current="true"]{color:var(--ink);font-weight:600}
+.sub.seen::before{content:"● ";color:var(--accent);font-size:9px;vertical-align:1px}
+.sub:not(.seen)::before{content:"○ ";font-size:9px;vertical-align:1px}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:clamp(16px,3vw,30px);min-width:0}
+.eyebrow{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font:500 12px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.eyebrow .w{background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:99px}
+.stage h2{font-size:clamp(24px,3.4vw,36px);font-weight:800;line-height:1.08;margin:10px 0 18px}
+.viz{margin:0 0 18px;min-width:0;overflow-x:auto}
+.viz svg{display:block;width:100%;min-width:540px;max-width:680px;height:auto;margin:0 auto}
+.sb{fill:var(--surface2);stroke:var(--line);stroke-width:1.5}
+.sa{fill:var(--accent)} .sw{fill:var(--warn)}
+.st{fill:var(--ink);font:600 15px var(--f-body)} .sm{fill:var(--muted);font:400 13px var(--f-body)}
+.sinv{fill:var(--accent-ink);font:700 15px var(--f-body)}
+.sl{stroke:var(--muted);stroke-width:2;fill:none} .sg{stroke:var(--line);stroke-width:1}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--surface2)}
+.stat b{display:block;font:800 clamp(24px,4vw,34px)/1.1 var(--f-display);color:var(--accent)}
+.stat span{font-size:13.5px;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:13px 14px;background:var(--surface2)}
+.card h4{font-size:16px;font-weight:700;margin-bottom:3px}
+.card p{margin:0;font-size:14.5px;color:var(--muted)}
+.card.warn{border-color:var(--warn);background:var(--warn-soft)} .card.warn h4{color:var(--warn)}
+.flow{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px 30px}
+.flow li{position:relative;border:1px solid var(--line);background:var(--surface2);border-radius:10px;padding:10px 13px;flex:1 1 150px;min-width:0}
+.flow li b{display:block;font-weight:600}
+.flow li span{display:block;font-size:13.5px;color:var(--muted)}
+.flow li:not(:last-child)::after{content:"→";position:absolute;right:-24px;top:50%;transform:translateY(-50%);color:var(--accent);font-weight:700}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+.tbl table{border-collapse:collapse;width:100%;min-width:480px;font-size:14.5px}
+.tbl th{text-align:left;font:500 12px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--surface2);padding:9px 12px}
+.tbl td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+.tbl td:first-child{font-weight:600;white-space:nowrap}
+pre.code{margin:0;background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:13px 15px;overflow-x:auto;font:500 13.5px/1.55 var(--f-mono);color:var(--ink)}
+.pts{margin:0 0 14px;padding-left:20px;display:grid;gap:5px}
+.pts li::marker{color:var(--accent)}
+.cue{border-left:4px solid var(--warn);background:var(--warn-soft);padding:10px 14px;border-radius:0 8px 8px 0;font-size:15px}
+.cue b{font:500 12px var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--warn);display:block;margin-bottom:2px}
+.cap{margin-top:18px;border-top:1px dashed var(--line);padding-top:14px}
+.cap .h{display:flex;justify-content:space-between;align-items:center;gap:10px;font:500 12px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.cap p{margin:8px 0 0;font-size:15.5px;line-height:1.65;max-width:75ch}
+.cap .s{transition:background .2s;border-radius:4px;padding:1px 0}
+.cap .s.on{background:var(--accent-soft);box-shadow:0 0 0 3px var(--accent-soft)}
+/* quiz */
+.q{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 14px;background:var(--surface)}
+.q h3{font:600 16px/1.45 var(--f-body);letter-spacing:0;margin-bottom:4px}
+.q .kind{font:500 11.5px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;border:1px solid transparent}
+.opt:hover{background:var(--surface2)}
+.opt input{margin-top:5px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+.opt.ok{background:var(--accent-soft);border-color:var(--accent)}
+.opt.no{background:var(--warn-soft);border-color:var(--warn)}
+.why{display:none;margin-top:8px;font-size:14.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px}
+.q.checked .why{display:block}
+.verdict{font-weight:700}
+.q.right .verdict{color:var(--accent)} .q.wrong .verdict{color:var(--warn)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:6px}
+.btn{border:1px solid var(--line);background:var(--surface2);border-radius:9px;padding:9px 15px;cursor:pointer;font-weight:600}
+.btn:hover{border-color:var(--accent)}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.score{font:800 22px var(--f-display)}
+/* dock */
+.dock{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));z-index:5}
+.dock .in{max-width:1180px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;justify-content:space-between}
+.tr{display:flex;gap:8px;align-items:center}
+.tr .btn{min-width:44px;min-height:44px;padding:8px 12px}
+.play{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);padding:8px 20px!important;min-width:150px}
+.opts{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:13.5px;color:var(--muted)}
+.opts select{background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:6px 8px;max-width:210px}
+.opts label{display:flex;gap:6px;align-items:center}
+.now{font:500 12px var(--f-mono);color:var(--muted);flex:1 1 180px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  nav{position:static;max-height:none;display:flex;gap:6px;overflow-x:auto;padding:6px}
+  nav .mod{flex:0 0 auto;width:auto;max-width:210px}
+  nav .subs{display:none}
+  .wrap{padding-bottom:210px}
+  .flow li:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-23px;transform:translateX(-50%)}
+  .flow{gap:28px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>GH-300 Study Course</h1>
+      <p>GitHub Copilot certification · narrated, in exam order · skills outline of August 7, 2026</p>
+    </div>
+    <div class="meter" aria-label="Course progress">
+      <div class="lbl"><span>Course progress</span><span id="pct">0%</span></div>
+      <div class="bar"><i id="pbar"></i></div>
+    </div>
+  </header>
+  <div class="shell">
+    <nav id="nav" aria-label="Modules"></nav>
+    <main><section class="stage" id="stage" aria-live="polite"></section></main>
+  </div>
+</div>
+
+<div class="dock" role="region" aria-label="Playback controls">
+  <div class="in">
+    <div class="tr">
+      <button class="btn" id="prev" aria-label="Previous slide">◀</button>
+      <button class="btn play" id="play">▶ Play narration</button>
+      <button class="btn" id="next" aria-label="Next slide">▶|</button>
+    </div>
+    <div class="now" id="now"></div>
+    <div class="opts">
+      <label>Speed
+        <select id="rate"><option value="0.9">0.9×</option><option value="1" selected>1×</option><option value="1.15">1.15×</option><option value="1.3">1.3×</option><option value="1.5">1.5×</option></select>
+      </label>
+      <label>Voice <select id="voice"><option>Loading…</option></select></label>
+      <label><input type="checkbox" id="voiceOn" checked> Sound</label>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- small helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const store = {
+  get(){ try { return JSON.parse(localStorage.getItem('gh300-course')||'{}'); } catch(e){ return {}; } },
+  set(o){ try { localStorage.setItem('gh300-course', JSON.stringify(o)); } catch(e){} }
+};
+
+/* ---------- diagrams ---------- */
+const VIZ = {
+  stats: v => `<div class="stats">${v.items.map(i=>`<div class="stat"><b>${i.n}</b><span>${i.l}</span></div>`).join('')}</div>`,
+  cards: v => `<div class="cards">${v.items.map(i=>`<div class="card ${i.w?'warn':''}"><h4>${i.h}</h4><p>${i.p}</p></div>`).join('')}</div>`,
+  flow:  v => `<ol class="flow">${v.steps.map(s=>`<li><b>${s.h}</b>${s.p?`<span>${s.p}</span>`:''}</li>`).join('')}</ol>`,
+  table: v => `<div class="tbl"><table><thead><tr>${v.head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${v.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`,
+  code:  v => `<pre class="code">${esc(v.text)}</pre>`,
+  bars:  () => {
+    const rows=[['Features',25,30],['Responsible AI',15,20],['Data & architecture',10,15],['Prompts & context',10,15],['Productivity & testing',10,15],['Privacy & safeguards',10,15]];
+    const x0=190,x1=610,sc=v=>x0+(x1-x0)*v/35; let o=`<svg viewBox="0 0 640 ${rows.length*42+46}" role="img" aria-label="GH-300 domain weight ranges">`;
+    [0,10,20,30].forEach(t=>{o+=`<line class="sg" x1="${sc(t)}" x2="${sc(t)}" y1="6" y2="${rows.length*42+10}"/><text class="sm" x="${sc(t)}" y="${rows.length*42+30}" text-anchor="middle">${t}%</text>`});
+    rows.forEach((r,i)=>{const y=14+i*42;o+=`<text class="st" x="${x0-12}" y="${y+19}" text-anchor="end">${r[0]}</text><rect class="${i==0?'sa':'sa'}" x="${sc(r[1])}" y="${y}" width="${sc(r[2])-sc(r[1])}" height="26" rx="5" opacity="${i==0?1:.72}"/><text class="st" x="${sc(r[2])+8}" y="${y+19}">${r[1]}–${r[2]}%</text>`});
+    return o+`</svg>`;
+  },
+  life: () => {
+    const n=[['Your editor','Code around the cursor,','open tabs, comments'],['Prompt builder','Packs the most relevant','context into a prompt'],['Secure transmission','Encrypted HTTPS request','to GitHub'],['Copilot proxy','Filters the input, then','routes it to the model'],['Language model','Generates candidate','completions or answers'],['Post-processing','Public-code match, security','and quality checks'],['Suggestion shown','You accept, edit or','reject it']];
+    let o=`<svg viewBox="0 0 560 ${n.length*80+10}" role="img" aria-label="Code suggestion lifecycle">`;
+    n.forEach((b,i)=>{const y=8+i*80;const hi=i==3||i==5;o+=`<rect class="${hi?'sa':'sb'}" x="16" y="${y}" width="240" height="52" rx="9"/><text class="${hi?'sinv':'st'}" x="34" y="${y+32}">${i+1}. ${b[0]}</text><text class="sm" x="280" y="${y+23}">${b[1]}</text><text class="sm" x="280" y="${y+42}">${b[2]}</text>`;
+      if(i<n.length-1)o+=`<path class="sl" d="M136 ${y+52} V${y+80}"/><path class="sl" d="M130 ${y+72} L136 ${y+80} L142 ${y+72}"/>`;});
+    return o+`</svg>`;
+  },
+  mcp: () => `<svg viewBox="0 0 640 230" role="img" aria-label="Model Context Protocol architecture">
+    <rect class="sb" x="8" y="30" width="170" height="86" rx="10"/><text class="st" x="93" y="68" text-anchor="middle">Copilot</text><text class="sm" x="93" y="90" text-anchor="middle">MCP client</text>
+    <rect class="sa" x="235" y="30" width="170" height="86" rx="10"/><text class="sinv" x="320" y="68" text-anchor="middle">MCP server</text><text class="sinv" x="320" y="90" text-anchor="middle" style="font-weight:400;font-size:13px">e.g. GitHub MCP Server</text>
+    <rect class="sb" x="462" y="30" width="170" height="86" rx="10"/><text class="st" x="547" y="68" text-anchor="middle">Tools &amp; data</text><text class="sm" x="547" y="90" text-anchor="middle">repos, issues, APIs</text>
+    <path class="sl" d="M178 73 H235"/><path class="sl" d="M227 67 L235 73 L227 79"/><path class="sl" d="M405 73 H462"/><path class="sl" d="M454 67 L462 73 L454 79"/>
+    <text class="sm" x="206" y="58" text-anchor="middle">tool call</text><text class="sm" x="433" y="58" text-anchor="middle">scoped</text>
+    <rect x="8" y="150" width="624" height="62" rx="9" fill="none" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text class="st" x="24" y="176" style="fill:var(--warn)">Governance</text><text class="sm" x="24" y="196">Expose only the tools a task needs · authenticate every capability · review what tools change</text></svg>`,
+  ladder: () => `<svg viewBox="0 0 640 270" role="img" aria-label="Ask, Edit and Agent modes">
+    <rect class="sb" x="10" y="150" width="190" height="100" rx="8"/><text class="st" x="26" y="178">Ask</text><text class="sm" x="26" y="200">Answers questions,</text><text class="sm" x="26" y="219">explains code.</text><text class="sm" x="26" y="238">No edits.</text>
+    <rect class="sb" x="225" y="90" width="190" height="160" rx="8"/><text class="st" x="241" y="118">Edit</text><text class="sm" x="241" y="140">Changes the files you</text><text class="sm" x="241" y="159">choose. You review</text><text class="sm" x="241" y="178">each diff, then keep</text><text class="sm" x="241" y="197">or undo it.</text>
+    <rect class="sa" x="440" y="26" width="190" height="224" rx="8"/><text class="sinv" x="456" y="56">Agent</text>
+    <text class="sinv" x="456" y="80" style="font-weight:400;font-size:13px">Plans the work, finds the</text><text class="sinv" x="456" y="99" style="font-weight:400;font-size:13px">files, edits many of them,</text><text class="sinv" x="456" y="118" style="font-weight:400;font-size:13px">runs tools and terminal</text><text class="sinv" x="456" y="137" style="font-weight:400;font-size:13px">commands, reads errors and</text><text class="sinv" x="456" y="156" style="font-weight:400;font-size:13px">iterates. You approve</text><text class="sinv" x="456" y="175" style="font-weight:400;font-size:13px">tool use and review.</text>
+    <text class="sm" x="10" y="266">more autonomy →</text></svg>`
+};
+const vizHTML = v => v ? VIZ[v.k](v) : '';
+
+/* ---------- course content ---------- */
+const MODS = [
+/* ===== 0 ===== */
+{id:'m0', title:'Exam briefing', w:'Start here', slides:[
+ {t:'What you are preparing for', v:{k:'stats',items:[{n:'700 / 1000',l:'passing score'},{n:'~60–65',l:'questions, as widely reported'},{n:'~100 min',l:'time, as widely reported'},{n:'6',l:'skill domains'}]},
+  b:['Scenario-based: a short story, then choose the best action.','Single answer, select-all, and true/false statements.','Mostly features that are generally available; popular preview features can appear.'],
+  n:`Welcome. This course takes you through the G H three hundred GitHub Copilot exam in an order that makes each topic easier to learn. You need seven hundred out of one thousand to pass. The exam is mostly short scenarios: you read a situation, then choose the best action, select every correct statement, or judge a true or false claim. The skills outline I am using was last updated on August seventh, twenty twenty-six. Question counts and timing are third-party figures, so check your exam confirmation for the exact numbers.`},
+ {t:'Six domains and their weight', v:{k:'bars'},
+  b:['Features is the heaviest, so it gets three modules here.','Do not skip the small domains. Any domain can appear in any mix.'],
+  cue:'The study guide\'s summary list shows "Use GitHub Copilot features" twice. That is a duplicate line, not a seventh domain.',
+  n:`Here are the six domains. Features is the biggest at twenty-five to thirty percent, so it gets three modules in this course. Responsible A I is next at fifteen to twenty percent. The other four are ten to fifteen percent each. Do not skip the small ones, because every domain can appear in any mix. One quirk: the summary list on the study guide shows the features domain twice. That is a duplicate line in the page, not a seventh domain.`},
+ {t:'The order we will follow', v:{k:'flow',steps:[{h:'1 · Responsible AI',p:'Principles decide many answers'},{h:'2 · Data & architecture',p:'How Copilot works'},{h:'3 · Privacy & safeguards',p:'Exclusions, filters, fixes'},{h:'4 · Prompts & context',p:'Get better output'},{h:'5 · Features ×3',p:'IDE, agents, CLI, review, admin'},{h:'6 · Productivity & testing',p:'Applied use cases'},{h:'7 · Final review',p:'Cram sheet and exam day'}]},
+  b:['Principles first, because they settle many scenario questions.','How Copilot works before what you can configure.','Features once you know prompts and data flow.'],
+  n:`The order is deliberate. We start with responsible A I, because those principles decide the right answer in many scenarios. Next, how Copilot works and handles data. Then privacy, content exclusions and safeguards, which follow naturally from the data flow. After that, prompt engineering and context. Only then do we cover features, in three modules: the I D E and plans, agents, M C P and the command line, and finally code review, Spaces and organization administration. We finish with productivity and testing, then a final review with a cram sheet and an exam day plan.`},
+ {t:'How the questions try to trick you', v:{k:'cards',items:[{h:'Absolutes',p:'"Always", "guarantees", "no longer need review". These are usually wrong.',w:1},{h:'Too much access',p:'"Every repository", "unrestricted admin", "all tools by default". Least privilege wins.',w:1},{h:'Right tool, wrong job',p:'suggest vs explain, inline vs chat, Business vs Enterprise.',w:1},{h:'Scope first',p:'Vague or overbroad prompt? Narrow it and add relevant context first.'}]},
+  b:['Read qualifiers: first, minimum, most appropriate, still required.','In select-all, every option stands on its own. Judge each one.'],
+  n:`Learn the four traps now, and you will spot them all through the exam. One: absolutes. Words like always, guarantees, or no longer need review are almost always wrong, because Copilot output must always be validated by a person. Two: too much access. Options that grant every repository, unrestricted admin rights, or all tools by default lose to least privilege. Three: the right tool for the wrong job, such as explain versus suggest. Four: when a prompt is vague or too broad, the first fix is to narrow it and add relevant context.`}
+],
+quiz:[
+ {q:'What score is required to pass GH-300?',o:['600 of 1000','700 of 1000','75 percent of questions','800 of 1000'],a:[1],w:'A score of 700 or greater on the 1000 scale is required.'},
+ {q:'Which domain carries the most weight?',o:['Use GitHub Copilot responsibly','Use GitHub Copilot features','Understand data and architecture','Prompt engineering'],a:[1],w:'Features is 25–30%, the largest band.'},
+ {q:'Which answer wording is most often a wrong-answer signal?',o:['"Review before merging"','"Limit tools to what the task needs"','"Skip review because Copilot guarantees safety"','"Narrow the prompt to the relevant method"'],a:[2],w:'Absolutes such as "guarantees" or "no review needed" contradict the principle that AI output must be validated.'}
+]},
+/* ===== 1 ===== */
+{id:'m1', title:'Use Copilot responsibly', w:'15–20%', slides:[
+ {t:'What can go wrong with generative AI', v:{k:'cards',items:[{h:'Hallucination',p:'Plausible code that is wrong, or calls APIs that do not exist.'},{h:'Insecure output',p:'Patterns learned from public code can include vulnerabilities.'},{h:'Bias',p:'Uneven quality across languages, domains and user groups.'},{h:'License and IP',p:'Output can resemble public code under a license.'},{h:'Privacy',p:'Sensitive code or data pasted into prompts.'},{h:'Over-reliance',p:'Accepting output you do not understand.'}]},
+  b:['Describe each risk and the mitigation that goes with it.'],
+  n:`Start with the risks, because the exam asks you to describe them and match mitigations. Generative models can hallucinate: they produce code that looks right but is wrong or uses things that do not exist. They can produce insecure code, because they learned from public code that includes vulnerabilities. They can show bias, with uneven quality across languages and groups. Their output can resemble public code under a license. Developers can leak sensitive data in prompts. And the quiet one: over-reliance, accepting output you do not understand.`},
+ {t:'Six Responsible AI principles', v:{k:'cards',items:[{h:'Fairness',p:'Treat groups equitably. Cue: one segment gets worse results.'},{h:'Reliability & safety',p:'Behave consistently and safely, even under unexpected conditions.'},{h:'Privacy & security',p:'Protect data, minimize collection, restrict access.'},{h:'Inclusiveness',p:'Work for all abilities, languages, connectivity. Cue: assistive tech.'},{h:'Transparency',p:'People can understand, review and audit how AI is used.'},{h:'Accountability',p:'People and organizations answer for outcomes. Never the AI itself.'}]},
+  cue:'Match the cue in the scenario to the principle. "The AI system should be held accountable" is always the wrong statement.',
+  n:`Memorize the six principles with their scenario cues. Fairness: one customer segment gets less accurate results. Reliability and safety: consistent, safe behavior, even under unexpected conditions or misuse. Privacy and security: protect data, collect only what is needed, restrict access by business need. Inclusiveness: assistive technologies, many languages, poor connectivity, equal access. Transparency: stakeholders can understand, review and audit. Accountability: people and organizations stay answerable. The AI system itself can never be the accountable party, so any option saying that is wrong.`},
+ {t:'Validate every output', v:{k:'flow',steps:[{h:'Read it',p:'Understand it'},{h:'Run it',p:'Does it behave?'},{h:'Test it',p:'Unit and edge cases'},{h:'Scan it',p:'Security tooling'},{h:'Review it',p:'Standards, licensing'},{h:'Own it',p:'You are accountable'}]},
+  b:['Correctness: tests. Security: scanning plus review. Licensing: public-code filter and review.'],
+  cue:'Compiles, passes a few tests, or came from a great prompt does not prove the code is correct, safe or compliant.',
+  n:`Here is the loop to remember. Read the code so you understand it. Run it. Test it, including edge cases. Scan it with security tooling. Review it against your standards and licensing rules. Then own it, because you are accountable for whatever you merge. Notice what is not on the list: trusting it because it compiles, because a few tests passed, or because the prompt was excellent. A clean compile only proves the syntax is valid. Many exam questions are this one idea in different costumes.`},
+ {t:'Operating Copilot responsibly', v:{k:'cards',items:[{h:'Keep a human in the loop',p:'Review before merge. Review commands before they run, even with the ghcs alias.'},{h:'Least privilege',p:'Give agents and tools only the access and tools the task needs.'},{h:'Leave a trail',p:'Agent work shows up as commits, pull requests and activity history.'},{h:'Show your work',p:'Transparency evidence: documented capabilities and limits, validation results, logs, audit records.'}]},
+  n:`To operate Copilot responsibly, keep a human in the loop. Review code before merging, and review commands before they run. Configuring the ghcs alias makes running approved commands easier, but it does not remove the review. Apply least privilege to agents and tools. Keep a trail: work done by an agent appears as commits, pull requests and activity history, which is what auditors use. And for transparency, the real evidence is documentation of capabilities and limitations, validation results, logs and audit records. A marketing statement that says the A I is innovative is not evidence.`},
+ {t:'Harms and mitigations', v:{k:'table',head:['Harm','Mitigation'],rows:[['Wrong code','Tests, code review, run it'],['Vulnerabilities','Security review, code scanning, secret scanning'],['License exposure','Public-code filter, code referencing, review'],['Data exposure','Content exclusions, org policies, no secrets in prompts'],['Over-reliance','Review culture, training, ownership'],['Unequal outcomes','Test across groups, monitor, investigate fairness first']]},
+  n:`Finish the module with a mapping you can reuse. Wrong code is mitigated with tests and review. Vulnerabilities, with security review, code scanning and secret scanning. License exposure, with the public code filter, code referencing, and review. Data exposure, with content exclusions, organization policies, and keeping secrets out of prompts. Over-reliance, with a review culture and clear ownership. And unequal outcomes for a group, by testing across groups, monitoring, and investigating fairness first.`}
+],
+quiz:[
+ {q:'Analysts find requests from one customer segment get less accurate AI recommendations and slower resolution than comparable groups. Which principle should be investigated first?',o:['Fairness','Subscription management','Code completion','CLI usability'],a:[0],w:'A disparity in treatment or outcomes across groups is a fairness issue.'},
+ {q:'Which statements describe responsible use of Copilot-generated code? Select all that apply.',o:['Test it before relying on it','Review it for security vulnerabilities','Consider licensing and IP implications','Treat it as an authoritative replacement for developer judgment','Remain accountable for what you merge'],a:[0,1,2,4],w:'Copilot is an assistant. Judgment, testing and accountability stay with the developer.'},
+ {q:'A developer says the prompt was detailed and the code looks right, so no validation is needed before deploying. True or false?',o:['True','False'],a:[1],w:'A good prompt improves relevance. It never guarantees correctness, security or licensing compliance.'},
+ {q:'A governance board debates who is accountable when an AI-assisted change causes a production incident. Which statement aligns with Responsible AI?',o:['The AI system itself is accountable','People and organizations remain accountable','No one, because the output was generated','Only the tool vendor'],a:[1],w:'Accountability stays with the people and organizations that deploy and use the system.'},
+ {q:'Which evidence best demonstrates transparency to auditors?',o:['A press release calling the AI industry-leading','Capability and limitation documentation, validation results, activity logs and audit records','Fewer reviewers in the process','Positive developer sentiment'],a:[1],w:'Transparency is shown with reviewable, checkable evidence.'},
+ {q:'Which are risks of generative AI coding tools? Select all that apply.',o:['Hallucinated code','Insecure patterns','Output resembling public code','Biased or uneven quality','Guaranteed correctness'],a:[0,1,2,3],w:'No generative tool guarantees correctness.'}
+]},
+/* ===== 2 ===== */
+{id:'m2', title:'Data & architecture', w:'10–15%', slides:[
+ {t:'The suggestion lifecycle', v:{k:'life'},
+  cue:'Know the order. Filtering of input happens at the proxy before the model. Public-code and security checks happen after the model.',
+  n:`This is the diagram to learn. One: your editor supplies context, such as the code around the cursor, open tabs and comments. Two: the prompt builder packs the most relevant context into a prompt. Three: the request travels over an encrypted connection to GitHub. Four: the Copilot proxy filters the input and routes it to the language model. Five: the model generates candidates. Six: post-processing checks them, including public code matching, security and quality. Seven: the suggestion appears in your editor, and you accept, edit or reject it. Remember: input filtering is before the model, output checks are after.`},
+ {t:'What goes into the prompt', v:{k:'cards',items:[{h:'Around the cursor',p:'Code before and after your position.'},{h:'Open tabs and neighbors',p:'Related files that look relevant.'},{h:'File path and language',p:'Tells the model the stack and conventions.'},{h:'Selection and attachments',p:'Selected code, #file, #codebase, @workspace.'},{h:'Chat history',p:'Earlier turns in the same chat thread.'},{h:'Instructions',p:'Custom instructions files and prompt files.'}]},
+  cue:'Two teams, same language, different suggestion quality? The likely cause is context: existing patterns and conventions in the repository.',
+  n:`Prompt building is about context. Copilot looks at the code around your cursor, other open tabs and neighboring files, the file path and language, any selection or attachments you give it, earlier turns of the chat, and any instructions files in the repository. The context window is limited, so Copilot picks the most relevant pieces. That explains a classic exam scenario: two teams use the same language, but one gets well-fitting suggestions. The team with consistent, established patterns in its repository gives Copilot better context. No special fine-tuning is involved.`},
+ {t:'Data usage and sharing', v:{k:'table',head:['Topic','What to know'],rows:[['In transit','Requests are sent securely over encrypted connections.'],['Business and Enterprise','Your code and prompts are not used to train the models.'],['Individual plans','A setting controls whether your snippets can be used for product improvement.'],['Retention','Rules differ by feature and plan. Check the GitHub Trust Center for the current terms.'],['Sharing','Do not put secrets into prompts. Use content exclusions for sensitive files.']]},
+  n:`Now data usage. Requests travel over encrypted connections. For Copilot Business and Enterprise, your code and prompts are not used to train the models. On individual plans, there is a setting that controls whether your snippets can be used for product improvement. Retention rules vary by feature and plan, so treat the GitHub Trust Center as the source of truth for the exact current terms. In practice, the exam wants you to remember three things: no training on business data, an opt-out on individual plans, and never put secrets in prompts.`},
+ {t:'Proxy filtering and post-processing', v:{k:'cards',items:[{h:'At the proxy, before the model',p:'Filters offensive or abusive input and routes the request to the model.'},{h:'After the model: public code',p:'Optional filter blocks suggestions that match public code.'},{h:'After the model: security',p:'Flags and removes risky patterns such as hard-coded credentials or injection-prone code.'},{h:'After the model: quality',p:'Checks relevance and formatting before showing a suggestion.'}]},
+  n:`Two stages protect output. At the proxy, before the model, input is filtered and the request is routed. After the model, post-processing runs several checks. The public code filter blocks suggestions that match public code. Security checks look for risky patterns, such as hard-coded credentials or injection-prone code. And quality checks look at relevance and formatting. Together these reduce risk, but they are guardrails and not guarantees. That is why you still validate everything, even with every filter turned on.`},
+ {t:'Limits of LLMs and Copilot', v:{k:'cards',items:[{h:'Hallucination',p:'Confident but wrong.',w:1},{h:'Limited context window',p:'Cannot see the whole repository at once.'},{h:'Non-deterministic',p:'The same prompt can give different answers.'},{h:'Training cutoff',p:'May not know newest APIs or versions.'},{h:'Training-data skew',p:'Better for common languages and patterns.'},{h:'Cannot verify',p:'It does not run your tests unless a tool does.'}]},
+  n:`Finish with limitations. Models hallucinate confidently. They have a limited context window, so they cannot see your whole repository at once. They are non-deterministic, so the same prompt can produce different answers. They have a training cutoff, so the newest APIs may be unknown. They work better for common languages and patterns. And they do not verify their own output. Each of these supports the same conclusion: give good context, check the result, and keep humans accountable.`}
+],
+quiz:[
+ {q:'Which sequence correctly describes a code suggestion?',o:['Model → proxy → editor context → suggestion','Editor context → prompt building → secure transmission → proxy → model → post-processing → suggestion','Proxy → editor context → model → prompt building','Post-processing → model → editor context → suggestion'],a:[1],w:'Context is gathered and packed, sent securely, filtered by the proxy, generated by the model, then post-processed.'},
+ {q:'Where are public-code matching and security checks applied to generated output?',o:['Before the prompt is built','In post-processing after the model','Only in the developer\'s terminal','Only in code review'],a:[1],w:'They run on the model\'s output, in post-processing.'},
+ {q:'Two teams use the same language. Team A gets suggestions that match its conventions. Team B gets generic ones. Most likely reason?',o:['Team A fine-tuned a private model','Team A\'s repository gives stronger context through existing patterns','Team B turned off autocomplete','Team B has a different programming language'],a:[1],w:'Suggestions are shaped by the context Copilot sees.'},
+ {q:'Which are limitations of LLMs? Select all that apply.',o:['They can hallucinate','The context window is limited','Output can vary between runs','They always know the newest APIs','They cannot verify their output by themselves'],a:[0,1,2,4],w:'Knowledge has a cutoff, so "always newest" is wrong.'},
+ {q:'On Copilot Business and Enterprise, is your code used to train the underlying models?',o:['Yes, always','No','Only for private repositories','Only if the filter is off'],a:[1],w:'Business and Enterprise data is not used to train the models.'}
+]},
+/* ===== 3 ===== */
+{id:'m3', title:'Privacy, exclusions & safeguards', w:'10–15%', slides:[
+ {t:'Who controls what', v:{k:'flow',steps:[{h:'Personal',p:'Individual settings, such as allowing snippet use'},{h:'Repository',p:'Content exclusions for that repo'},{h:'Organization',p:'Policies, exclusions, feature availability'},{h:'Enterprise',p:'Policies across all organizations'}]},
+  b:['Higher levels can constrain what lower levels may do.','Policies cover things like public-code matching, chat, and agent features.'],
+  n:`Privacy settings exist at four levels. Individuals control personal settings. Repository administrators configure content exclusions for their repositories. Organization owners set policies and exclusions across the organization, including which features are available. And enterprise owners set policies across all of their organizations. In general, the higher level constrains the lower one, so a feature disabled by an organization policy cannot be switched on by an individual user.`},
+ {t:'Content exclusions', v:{k:'code',text:`# Organization-level content exclusion (illustrative)
+"*":
+  - "/secrets/**"
+my-org/payments-api:
+  - "/src/risk-model/**"
+  - "**/*.pem"`},
+  b:['Excluded files are not used as context and get no suggestions.','Configured by repository admins, organization owners and enterprise owners.','Available on Copilot Business and Enterprise.','Changes can take a while to reach every IDE.'],
+  cue:'"Keep certain repositories out of Copilot interactions" means content exclusions. Nothing else on the list does that.',
+  n:`Content exclusions are the top privacy control. Excluded files are not used as context for suggestions, and Copilot does not offer suggestions inside them. Repository administrators, organization owners and enterprise owners configure them with path patterns. They are available on Business and Enterprise. Changes can take a little while to reach every I D E. They are not a perfect wall, and some newer experiences may not honor them yet, so check the current documentation. For the exam, remember this: if a scenario says certain repositories or files must not be used as context, the answer is content exclusions.`},
+ {t:'Public code filter and code referencing', v:{k:'cards',items:[{h:'Block',p:'Suggestions that match public code of about 150 characters are blocked.'},{h:'Allow',p:'Matching suggestions can appear. Code referencing shows the match and its license.'},{h:'Why it matters',p:'Reduces license and IP exposure. It does not remove the need for review.',w:1}]},
+  n:`The suggestions matching public code setting has two states. When set to block, Copilot suppresses suggestions that closely match public code, roughly one hundred fifty characters or more. When set to allow, matching suggestions may appear, and code referencing shows you the matching source and its license so you can decide. This reduces license and intellectual property exposure, but it does not replace review. Questions here often ask which setting to enable for licensing concerns, and the answer is to enable the filter.`},
+ {t:'Ownership, indemnity and limits', v:{k:'cards',items:[{h:'You own the decision',p:'You review, accept and are accountable for what you commit.'},{h:'IP indemnity',p:'Business and Enterprise include a copyright commitment. It expects the public code filter to be on.'},{h:'No guarantees',p:'Output can still be wrong, insecure or similar to existing code.',w:1}]},
+  n:`On ownership: the code you accept is your responsibility. GitHub does not guarantee that output is correct, secure or free from similarity to existing code. For Business and Enterprise, GitHub offers an intellectual property commitment, which expects the public code filter to be turned on. Check the current terms for the exact conditions. The safe exam line is this: tools and commitments reduce risk, people stay accountable, and nothing guarantees safe output.`},
+ {t:'Troubleshooting suggestions', v:{k:'flow',steps:[{h:'Account',p:'Signed in with a licensed account?'},{h:'Extension',p:'Enabled, updated, supported IDE?'},{h:'Exclusions',p:'Is this file excluded?'},{h:'Filters',p:'Public-code filter blocking?'},{h:'Network',p:'Proxy, firewall, allowlist'},{h:'Diagnostics',p:'Collect logs, then escalate'}]},
+  cue:'Sign-in succeeds but suggestions time out intermittently? Think network path: firewall, proxy, blocked endpoints. Then collect diagnostics and logs.',
+  n:`For troubleshooting, work from simple to deep. Check the account and license. Check that the extension is enabled and up to date in a supported I D E. Check whether the file is covered by a content exclusion. Check whether the public code filter is blocking the suggestion. Then look at the network path: proxy settings, firewalls and blocked endpoints. Finally collect Copilot diagnostics and extension logs. If authentication works but responses time out intermittently, the network path and logs are the best next step. Reinstalling machines or granting extra permissions is not.`}
+],
+quiz:[
+ {q:'Which control keeps specific repositories and files from being used as context in Copilot interactions?',o:['Content exclusions','Multiple Suggestions','IDE formatting settings','Copilot CLI explain'],a:[0],w:'Content exclusions are designed for this.'},
+ {q:'Who can configure content exclusions? Select all that apply.',o:['Repository administrators (for their repository)','Organization owners','Enterprise owners','Any developer with read access'],a:[0,1,2],w:'Configuring exclusions needs administrative rights.'},
+ {q:'The public code filter is set to block. What happens?',o:['Copilot is disabled','Suggestions that match public code are suppressed','All suggestions show license text','Only comments are suggested'],a:[1],w:'Matches of roughly 150 characters or more to public code are blocked.'},
+ {q:'Authentication succeeds, but suggestions and chat time out intermittently for a group of developers. What should the platform team investigate? Select all that apply.',o:['Firewall rules blocking endpoints','Proxy configuration','Network restrictions','Extension configuration and sign-in state','Number of comments in source files'],a:[0,1,2,3],w:'Connectivity and extension state matter. Comment count does not.'},
+ {q:'Content exclusions are available on Copilot Free. True or false?',o:['True','False'],a:[1],w:'They are available on Business and Enterprise.'}
+]},
+/* ===== 4 ===== */
+{id:'m4', title:'Prompt engineering & context', w:'10–15%', slides:[
+ {t:'Anatomy of a good prompt', v:{k:'code',text:`Add an expedited shipping tier to calculateShipping() in
+orders/shipping.ts.
+Keep the existing API contract and pricing rules unchanged.
+Return a ShippingQuote with cost and estimated delivery date.
+Add unit tests for the new tier, including a null address.`},
+  b:['Goal · Context · Constraints · Expected output.'],
+  n:`A strong prompt has four parts. A goal, saying what you want. Context, pointing at the relevant code. Constraints, such as preserving an existing A P I contract or business rules. And expected output, including format or tests. Look at the example on screen. It names the method and file, states what must not change, and defines the result. Compare that with a prompt like, make the application better. Vague prompts produce vague answers, and that is the most common problem the exam asks you to fix.`},
+ {t:'The four S principles', v:{k:'cards',items:[{h:'Single',p:'One task per prompt. Break big jobs into steps.'},{h:'Specific',p:'Name the language, framework, inputs, outputs and constraints.'},{h:'Short',p:'Concise and clear. Skip filler and unrelated detail.'},{h:'Surface context',p:'Bring relevant code into view: selection, open files, #file.'}]},
+  cue:'Wording of the fourth S varies between sources. The idea is to surface relevant context, and not to flood the prompt.',
+  n:`Many study guides summarize prompt best practice as four S's. Single: one task per prompt, and break complex work into steps. Specific: name the language, framework, inputs, outputs and constraints. Short: concise and clear, without filler or unrelated detail. And surface context: make the relevant code visible by selecting it, opening the files, or attaching them. The exact wording of the fourth S differs between sources, so remember the idea. Give Copilot the relevant context, not all context.`},
+ {t:'Zero-shot, one-shot, few-shot', v:{k:'table',head:['Style','What you give','Example'],rows:[['Zero-shot','Instruction only','"Convert this date to ISO 8601."'],['One-shot','One worked example','"Input: 3/4/26 → 2026-03-04. Now convert 5/6/27."'],['Few-shot','Several examples','Two or three input and output pairs, then the new input.']]},
+  b:['More examples improve consistency of format and style.'],
+  n:`Three prompting styles show up on the exam. Zero-shot means you give only an instruction. One-shot means you include one worked example. Few-shot means you include several examples, so Copilot can infer the pattern. Examples are the best way to control format, naming and style. If a scenario says the developer provides two sample inputs and outputs, that is few-shot prompting. If there is only an instruction with no example, that is zero-shot.`},
+ {t:'How context is determined', v:{k:'cards',items:[{h:'Too brief',p:'"Add expedited shipping." No contract, no constraints, so breaking changes.',w:1},{h:'Too broad',p:'"Analyze the entire workspace and fix anything." Noise from unrelated code.',w:1},{h:'Just right',p:'The method, related files, the error, expected behavior and constraints.'}]},
+  b:['First fix for a bad answer: narrow the scope, add the error and the constraints.','Do not add unrelated repositories. More context is not always better.'],
+  n:`How does Copilot decide what context to use? From your selection, the current file, open tabs, anything you attach, the chat history, and instructions files. That is why scope matters. A prompt that is too brief, like add support for expedited shipping, leaves out the A P I contract and breaks things. A prompt that is too broad, like analyze the entire workspace, floods the answer with unrelated code. The fix is the same in both directions: focus on the relevant method and files, then add the error, expected behavior and constraints. Adding unrelated repositories makes things worse.`},
+ {t:'Reuse and customize', v:{k:'table',head:['Mechanism','Where it lives','Use it for'],rows:[['Custom instructions','.github/copilot-instructions.md','Repository-wide conventions for every chat'],['Path-specific instructions','.github/instructions/*.instructions.md','Rules for certain file patterns'],['Prompt files','.github/prompts/*.prompt.md','Reusable task prompts you run on demand'],['Custom agents','Agent profile files','A specialized, reusable assistant for recurring work'],['Chat hygiene','New chat or /clear','Stale history pollutes answers, so reset when you change topic']]},
+  n:`Finally, reuse. Custom instructions in the dot github folder apply repository conventions to every chat. Path-specific instruction files target certain file patterns. Prompt files are reusable task prompts you run on demand, which is the answer when a team keeps retyping the same detailed unit test instructions. Custom agents give a specialized, reusable assistant for recurring work. And manage your chat history: when you change topic, start a new chat, because stale history pollutes answers. Even with all of this, outputs are still not guaranteed correct.`}
+],
+quiz:[
+ {q:'A developer prompts: "Analyze the entire workspace and fix anything that might be causing order failures." Answers are poor. What helps most? Select all that apply.',o:['Limit the request to the affected method and related files','Describe the observed error and expected behavior','Specify constraints such as preserving interfaces','Add repositories from other teams','Replace the prompt with "Make the application better"'],a:[0,1,2],w:'Narrow scope, state the problem, and add constraints. Extra repositories and vaguer wording add noise.'},
+ {q:'A prompt includes two sample input/output pairs before the real input. This is:',o:['Zero-shot prompting','Few-shot prompting','Chain deletion','Content exclusion'],a:[1],w:'Several examples before the task is few-shot prompting.'},
+ {q:'A team keeps rebuilding the same detailed prompt for unit tests. Best fit?',o:['Disabling inline suggestions','A reusable prompt file or custom agent','gh copilot explain','The multiple suggestions pane'],a:[1],w:'Reusable prompt files or custom agents package recurring instructions.'},
+ {q:'Which file gives Copilot repository-wide conventions for every chat?',o:['.github/copilot-instructions.md','package.json','README only','.gitignore'],a:[0],w:'Repository custom instructions live in .github/copilot-instructions.md.'},
+ {q:'Which of these is NOT a sound prompt practice?',o:['One task per prompt','Name the language and constraints','Attach the relevant file','Paste the whole repository for "maximum context"'],a:[3],w:'Flooding the prompt with unrelated context dilutes the signal.'},
+ {q:'Chat answers keep referencing an old, unrelated topic. Best action?',o:['Start a new chat or clear history','Upgrade the plan','Disable Copilot','Add more files'],a:[0],w:'Chat history is part of the context. Reset it when the topic changes.'}
+]},
+/* ===== 5 ===== */
+{id:'m5', title:'Features I: IDE & plans', w:'25–30%', slides:[
+ {t:'Plans at a glance', v:{k:'table',head:['Plan','Audience','Key point'],rows:[['Free','Individual','No-cost, limited usage. Good for learning.'],['Pro','Individual','Paid individual subscription with higher limits.'],['Pro+','Individual','Largest individual allowances and the most advanced models and agent features.'],['Business','Organization','Centralized seats and policy, security filtering, content exclusions, audit logs, IP commitment.'],['Enterprise','Organization','Everything in Business plus repository-aware and organization-knowledge features.']]},
+  cue:'Needs governance, but not repository-aware answers from internal code and docs: Business. Needs repository-aware or internal-knowledge help: Enterprise.',
+  n:`Start with the plans, because plan-matching questions are very common. Free is a no-cost individual plan with limited usage. Pro is the paid individual plan. Pro plus is the top individual tier, with the largest allowances and the most advanced models and agent features. Business is the organization plan: centralized license and seat management, policy control, security filtering, content exclusions, audit logs and an intellectual property commitment. Enterprise includes everything in Business, plus repository-aware features, such as questions about internal code and organization knowledge. The classic rule: if the organization does not need repository-aware help, Business is enough.`},
+ {t:'Inline suggestions and comments', v:{k:'table',head:['Action','Typical shortcut (VS Code)'],rows:[['Accept suggestion','Tab'],['Accept next word only (partial acceptance)','Ctrl + →'],['Next or previous suggestion','Alt + ] / Alt + ['],['Open suggestions panel (Multiple Suggestions)','Ctrl + Enter'],['Dismiss','Esc']]},
+  b:['A clear comment above the code tells Copilot your intent. It reads the surrounding code too.'],
+  n:`Inline suggestions are the foundation. Copilot shows ghost text as you type. Press Tab to accept it. If only part is useful, partial acceptance lets you take the next word or line and keep typing, which is better than accepting everything and deleting later. You can cycle alternatives, or open the suggestions panel to see several at once. That panel is the multiple suggestions feature, and it is the right answer when a team wants to compare alternative implementations. Comments help too: Copilot combines your comment with surrounding code, so a comment stating the goal and constraints improves results.`},
+ {t:'Copilot Chat in the IDE', v:{k:'table',head:['You need to…','Use'],rows:[['Understand unfamiliar code','Copilot Chat, with /explain'],['Change selected code without leaving the editor','Inline chat'],['Compare alternative implementations','Multiple Suggestions panel'],['Fix an error','Inline chat or chat with the error and relevant code'],['Generate tests','Chat with /tests'],['Reuse the same detailed instructions','Prompt file or custom agent']]},
+  n:`Chat is for conversation. Use Copilot Chat to understand unfamiliar code, ask follow-up questions, or discuss performance. Use inline chat to edit selected code without leaving your editing context. Use the multiple suggestions panel to compare alternatives. To fix an exception, highlight the relevant code and prompt with the error details. To generate tests, use the tests slash command. And to reuse the same instructions, use a prompt file or custom agent. Memorize this table, because feature-to-task matching is one of the most common question types.`},
+ {t:'Ask, Edit and Agent modes', v:{k:'ladder'},
+  cue:'Agent mode investigates dependencies, coordinates multi-file changes, uses tools and iterates. Inline completion only predicts at the cursor.',
+  n:`Chat has three modes. Ask answers questions and explains code, with no edits. Edit changes the files you choose, and you review every diff. Agent mode takes a goal and works toward it. It plans the work, finds relevant files, edits several of them, runs tools and terminal commands, reads the errors, and iterates before presenting results. You still approve tool use and review the changes. When an exam scenario mentions multiple files, dependencies, tools, and iteration, choose agent mode. When it only mentions the next few tokens of code at the cursor, that is inline completion.`},
+ {t:'Enabling Copilot in the IDE', v:{k:'flow',steps:[{h:'Licence',p:'Seat from your org or an individual plan'},{h:'Install',p:'Copilot extension in a supported IDE'},{h:'Sign in',p:'GitHub account that holds the seat'},{h:'Check policy',p:'Org policy allows the feature'},{h:'Verify',p:'Status icon and a test suggestion'}]},
+  b:['Supported IDEs include VS Code, Visual Studio, JetBrains IDEs and more.','Triggering options: inline suggestions, chat, CLI, and agent mode.'],
+  n:`Enabling Copilot is simple. You need a license, either an organization seat or an individual plan. Install the Copilot extension in a supported I D E, such as Visual Studio Code, Visual Studio or a JetBrains I D E. Sign in with the GitHub account that holds the seat. Confirm the organization policy allows the feature you want. Then verify with the status icon and a test suggestion. The exam also expects you to name the ways to trigger Copilot: inline suggestions, chat, the command line, and agent mode.`}
+],
+quiz:[
+ {q:'A team wants to compare several alternative implementations before choosing one. Which feature fits?',o:['Content exclusions','Multiple Suggestions','Security filtering','Copilot CLI explain'],a:[1],w:'The suggestions panel shows alternatives side by side.'},
+ {q:'A developer likes the first two lines of a long suggestion. What is the best approach?',o:['Use partial acceptance','Disable Inline Suggestions','Reject it and regenerate','Accept all and delete later'],a:[0],w:'Partial acceptance takes only what you need.'},
+ {q:'A company deploys Copilot to 3,000 developers. It needs centralized license management, policy control, security filtering and code-reference controls. It does not need repository-aware help from internal docs. Which plan fits at minimum?',o:['Free','Pro','Business','Enterprise'],a:[2],w:'Business covers organizational governance. Enterprise adds repository-aware features the company says it does not need.'},
+ {q:'Architects want developers to ask questions about internal repositories and generate documentation from organizational knowledge. Contoso uses Business today. What should they do?',o:['Upgrade the affected users to Enterprise','Assign Pro licenses','Enable only chat in VS Code','Create custom agents in Business'],a:[0],w:'Repository-aware, organization-knowledge capabilities are Enterprise features.'},
+ {q:'Which scenario needs Agent mode?',o:['Completing the next token while typing','Analyzing dependencies across files, making coordinated changes, using tools, and iterating before human review','Explaining a shell command','Hiding a repository from Copilot'],a:[1],w:'Multi-step, tool-using, iterative work is Agent mode.'},
+ {q:'Which feature lets a developer edit selected code without leaving the current editing context?',o:['Inline chat','Static autocomplete','gh copilot explain','Content exclusions'],a:[0],w:'Inline chat works directly in the editor on the selection.'}
+]},
+/* ===== 6 ===== */
+{id:'m6', title:'Features II: Agents, MCP & CLI', w:'25–30%', slides:[
+ {t:'Model Context Protocol (MCP)', v:{k:'mcp'},
+  b:['MCP is an open protocol that lets AI clients call tools and read data through servers.','The GitHub MCP Server exposes approved GitHub capabilities to a client.'],
+  cue:'Secure MCP use: expose only needed tools, scope data access, authenticate each capability, review tool-driven changes. Never "all tools by default".',
+  n:`M C P, the Model Context Protocol, is an open standard that lets an A I client, like Copilot, call tools and read data through servers. The GitHub M C P Server exposes approved GitHub capabilities, so a custom client does not need every GitHub operation hard-coded. The risk is excess power, so governance is the exam point. Expose only the specific tools a task needs. Review what data, repositories and files a workflow can reach. Check authentication and authorization on every capability. And review tool-driven changes before accepting them. Exposing all tools by default, or giving every client administrator credentials, is always wrong.`},
+ {t:'Agent sessions and sub-agents', v:{k:'cards',items:[{h:'Agent sessions',p:'Work you hand to an agent runs as a session. You can have several and manage them from one place.'},{h:'Sub-agents',p:'The main agent delegates a focused task to a sub-agent with its own context, which keeps the main context clean.'},{h:'Why it matters',p:'Context is limited. Splitting work keeps each agent focused and cheaper to run.'}]},
+  n:`Agent work is organized into sessions. You can run and manage several of them, such as one in your editor and others in the background or the cloud. Within a session, the main agent can delegate focused tasks to sub-agents. Each sub-agent gets its own context, does its research or isolated work, and returns a result, so the main agent's context stays clean. The study guide describes this as optimized context usage. If an exam item mentions delegating tasks to keep context focused, think sub-agents.`},
+ {t:'Cloud agent: from issue to pull request', v:{k:'flow',steps:[{h:'Assign',p:'Give an issue or task to Copilot'},{h:'Work',p:'Agent branches and works in its own environment'},{h:'Open PR',p:'Draft pull request with commits'},{h:'Validate',p:'CI and tests run'},{h:'Human review',p:'A person reviews and approves'},{h:'Merge',p:'Only after review'}]},
+  b:['Commits, pull requests and activity history make the agent\'s work auditable.','Governable tasks: bounded scope, acceptance criteria, review gates, limited permissions.'],
+  cue:'CI failure on an agent\'s change? Investigate the failures, changes and environment first. Never bypass tests, grant broad permissions, or merge on trust.',
+  n:`The cloud agent, also called the coding agent, takes a task such as an issue, works in its own environment on a separate branch, and opens a pull request. CI runs. Then a person reviews and decides whether to merge. Everything is traceable through commits, pull requests and activity history, which is exactly what a compliance auditor needs. To make autonomous work governable, give it a bounded scope, clear acceptance criteria, defined validation and review, and limited permissions. If its change fails C I, investigate the cause first. Do not remove tests, grant broad access, or merge just because an agent made the change.`},
+ {t:'Copilot CLI: what and how', v:{k:'code',text:`# Install the agentic Copilot CLI (needs a recent Node.js)
+npm install -g @github/copilot
+
+copilot                    # start an interactive session
+copilot -p "list files changed in the last commit"   # one-shot prompt
+
+# Older GitHub CLI extension (still tested in many questions)
+gh extension install github/gh-copilot
+gh copilot suggest "undo the last commit but keep my changes"
+gh copilot explain "kubectl get pods --all-namespaces | grep CrashLoopBackOff"`},
+  b:['It brings Copilot into the terminal: natural language to commands, scripts, and file work.','Commands run only after you review and approve them.'],
+  n:`The Copilot command line interface brings Copilot into the terminal. The current agentic C L I installs with npm, and you start it by typing copilot for an interactive session, or pass a single prompt for a one-shot answer. It can generate commands and scripts from natural language and help manage files, always asking before it runs something. The older GitHub C L I extension, with gh copilot suggest and gh copilot explain, still appears in many exam questions, so know both. Whichever you use, a person reviews a command before it runs.`},
+ {t:'CLI scenarios the exam loves', v:{k:'table',head:['Scenario','Answer'],rows:[['Describe a goal in plain English, get a command','gh copilot suggest, then review before running'],['Understand an existing command or pipeline','gh copilot explain'],['Run approved suggestions with fewer keystrokes','Configure aliases such as ghcs and ghce. Review still required.'],['Build or change scripts, work with files','Copilot CLI in an interactive session'],['"No longer need to review because it came through the alias"','False']]},
+  cue:'Suggest generates. Explain describes. Neither removes the review step.',
+  n:`Practice the CLI scenarios. You know the goal but not the command, such as undo my last commit but keep my changes: use suggest, review the result, then run. You have a command and want to understand it, such as a kubectl pipeline with grep: use explain. You want fewer keystrokes running approved suggestions: configure aliases like ghcs, but review is still required. Building or changing scripts and working with files: use an interactive C L I session. And any option that says the alias removes the need to review commands is false.`}
+],
+quiz:[
+ {q:'A developer must analyze dependencies across files, identify affected components, make coordinated changes with tools, and iterate before human review. Which capability?',o:['Inline Suggestion','Agent Mode','gh copilot explain','Content exclusions'],a:[1],w:'Agent mode handles multi-step, tool-using, iterative work.'},
+ {q:'Which controls reduce risk when exposing capabilities through MCP? Select all that apply.',o:['Review authentication and authorization for every capability','Evaluate what repositories, files and data the workflow can access','Review tool-driven changes before accepting them','Expose only the tools required for approved tasks','Expose all tools by default for flexibility'],a:[0,1,2,3],w:'Least privilege and review reduce risk. Exposing everything by default widens the attack surface.'},
+ {q:'An engineer inherits a script with a kubectl | grep | awk pipeline and wants to understand it before changing it.',o:['gh copilot explain','gh copilot suggest','Multiple Suggestions','Configure ghcs aliases'],a:[0],w:'Explain describes an existing command.'},
+ {q:'A developer knows the outcome ("undo the last commit, keep file changes") but not the Git command. Policy requires review before execution.',o:['gh copilot suggest, then review before running','Run any command Copilot returns automatically','gh copilot explain to generate the command','Inline chat only'],a:[0],w:'Suggest generates the command. Policy still requires review.'},
+ {q:'Cloud agent work can be investigated through commits, pull requests and related activity history. True or false?',o:['True','False'],a:[0],w:'Agent work flows through normal GitHub artifacts, so it is traceable.'},
+ {q:'Which make autonomous agent tasks easier to govern? Select all that apply.',o:['Clearly bounded scope and defined objectives','Defined validation and review before changes are accepted','Explicit acceptance criteria','Limited permissions, tools and resource access','Authority to change any system necessary'],a:[0,1,2,3],w:'Open-ended authority is the opposite of least privilege.'},
+ {q:'A dependency update by the cloud agent fails CI. What should the team do first?',o:['Investigate failures, changes, dependencies, environment and test results','Remove the failing tests','Grant broad permissions','Merge because an agent produced it'],a:[0],w:'Find the root cause before changing anything. Never bypass controls.'}
+]},
+/* ===== 7 ===== */
+{id:'m7', title:'Features III: Review, Spaces & admin', w:'25–30%', slides:[
+ {t:'Code review and pull request summaries', v:{k:'cards',items:[{h:'Copilot code review',p:'Ask Copilot to review a pull request, or review a selection in the IDE. It leaves comments and suggested fixes.'},{h:'PR summaries',p:'Copilot drafts a description of what a pull request changes.'},{h:'Review standards',p:'Instructions files tell reviews what your team cares about, such as security or naming rules.'},{h:'Still your decision',p:'Human reviewers approve. Copilot review supplements them.',w:1}]},
+  n:`Copilot can review code. You can request a review on a pull request, or review a selection in your I D E. It leaves comments and suggested fixes. Copilot can also draft pull request summaries that describe what changed. To make reviews follow your team's standards, add instructions files that say what to check, for example security rules or naming conventions. Copilot review is a supplement. Human reviewers still approve changes, and organization policies control whether Copilot code review is available.`},
+ {t:'Spaces and Spark', v:{k:'cards',items:[{h:'Spaces',p:'Collect the files, docs and context for a project so chats stay grounded in the same material.'},{h:'Spark',p:'Describe an app in natural language and iterate on it to build a working application.'},{h:'Prompt files and instructions',p:'Reuse the same standards and tasks consistently.'}]},
+  n:`Two newer features appear in the study guide. Spaces let you collect the files, documents and context for a project, so chats stay grounded in the same material. Spark lets you describe an application in natural language and iterate on it to build something working. Together with prompt files and instruction files, they help teams get consistent results. For the exam, know what each one is for, and do not expect deep configuration detail.`},
+ {t:'Organization policies and audit logs', v:{k:'table',head:['Need','Where'],rows:[['Turn features on or off for the organization','Copilot policies in organization or enterprise settings'],['Enable Copilot code review policies','Organization or enterprise Copilot policies'],['Control availability across IDEs and github.com','Feature policies per surface'],['See who changed policies or seats, and when','Audit log events'],['Keep sensitive content out of context','Content exclusions']]},
+  b:['Policies set at a higher level constrain lower levels.'],
+  n:`Administrators manage Copilot with policies. At the organization or enterprise level, you decide which features are available, including Copilot code review, and where they are available, such as in I D Es versus on github dot com. When an auditor asks who changed a policy or assigned a seat, and when, the answer is audit log events. And for keeping sensitive repositories out of Copilot's context, the control is content exclusions. Remember that settings at a higher level constrain settings below them.`},
+ {t:'Managing subscriptions with the REST API', v:{k:'table',head:['Task','REST API call (organization)'],rows:[['Get Copilot settings and seat summary','GET /orgs/{org}/copilot/billing'],['List seat assignments','GET /orgs/{org}/copilot/billing/seats'],['Add users to Copilot','POST /orgs/{org}/copilot/billing/selected_users'],['Remove users from Copilot','DELETE /orgs/{org}/copilot/billing/selected_users']]},
+  b:['Use this to automate onboarding and offboarding instead of clicking through settings.','Check the current API reference for exact fields and permissions.'],
+  n:`Subscriptions can be managed programmatically with the Copilot REST A P I. For an organization, you can read the billing summary, list seat assignments, add selected users, and remove selected users. This is how you automate onboarding and offboarding instead of clicking through settings. You do not need to memorize every field, but you should know that seat and subscription management can be scripted through the REST A P I, and that audit log events record what happened. Check the current A P I reference for exact paths and permissions.`}
+],
+quiz:[
+ {q:'An organization wants to add and remove Copilot seats automatically as people join and leave teams. What should they use?',o:['The Copilot REST API for billing and seat management','Content exclusions','Multiple Suggestions','Inline chat'],a:[0],w:'Seat and subscription management can be automated through the REST API.'},
+ {q:'An auditor asks who changed Copilot policies and when.',o:['Audit log events','PR summaries','Prompt files','Spark'],a:[0],w:'Audit logs record administrative events.'},
+ {q:'A team wants Copilot code review to follow its house standards.',o:['Instructions files that describe review standards','Disable code review','Upgrade to Pro+','Use gh copilot explain'],a:[0],w:'Instruction files customize what reviews look for.'},
+ {q:'Where do administrators decide that a feature is available in IDEs but not on github.com?',o:['Organization or enterprise Copilot policies','Personal editor settings','Pull request comments','The .gitignore file'],a:[0],w:'Feature availability is managed through Copilot policies.'},
+ {q:'Which feature turns a natural-language description into a working app you can iterate on?',o:['Spark','Spaces','Content exclusions','ghcs'],a:[0],w:'Spark builds apps from natural language. Spaces organizes context.'}
+]},
+/* ===== 8 ===== */
+{id:'m8', title:'Productivity, testing & security', w:'10–15%', slides:[
+ {t:'Generate, refactor, document', v:{k:'cards',items:[{h:'Generate',p:'Boilerplate, functions, queries, regex, sample data in JSON, SQL or CSV.'},{h:'Refactor',p:'Simplify repetitive or complex code, rename, restructure. Behavior must not change.'},{h:'Document',p:'Comments, parameter and return descriptions, README sections, consistent terminology.',},{h:'Modernize legacy code',p:'Explain old code, then translate or update it with tests as a safety net.'}]},
+  cue:'Review every refactor. "Refactoring does not change functionality" does not justify auto-accepting suggestions.',
+  n:`On productivity: Copilot generates boilerplate, functions, queries, regular expressions and sample data in formats like J S O N, S Q L or C S V. It helps refactor by simplifying repetitive or complex code. It drafts documentation: inline comments for tricky business logic, parameter and return descriptions, and README sections like prerequisites, installation and usage. For legacy modernization, ask Copilot to explain the old code first, then update or translate it with tests as a safety net. And always review the output. A refactor is meant to preserve behavior, but a suggestion can still break it.`},
+ {t:'Learning faster and switching less', v:{k:'flow',steps:[{h:'Ask in the IDE',p:'Explain code without leaving your editor'},{h:'Onboard',p:'Understand an unfamiliar class or service'},{h:'Follow up',p:'Ask why, then ask for alternatives'},{h:'Verify',p:'Check against docs and tests'}]},
+  b:['Reduces context switching between editor, docs and search.','Explanations can be wrong too. Verify what matters.'],
+  n:`Copilot also speeds learning. When you join a legacy project, you can ask for an explanation of an unfamiliar algorithm without leaving your editor, which reduces context switching. You can ask follow-up questions, request alternatives, and compare approaches. Just remember that explanations can be wrong too. Verify what matters against documentation and tests. This is the safe way to use Copilot Chat throughout a day: to understand, brainstorm, generate tests, and debug, with focused context and your own judgment.`},
+ {t:'Testing with Copilot', v:{k:'table',head:['Task','How Copilot helps'],rows:[['Unit tests','Chat with /tests on selected code.'],['Integration tests','Describe the flow, services and test data to cover.'],['Edge cases','Null or empty input, boundaries, errors, large input.'],['Assertions','Suggests what to assert. Check they test behavior, not just the code shape.'],['Before and after refactoring','Generate tests that lock in current behavior first.']]},
+  cue:'Generated tests can be shallow. Passing tests prove only what the tests check.',
+  n:`Testing is a favorite exam area. Select code and use the tests command in chat to generate unit tests. Describe the flow and test data for integration tests. Ask Copilot to identify edge cases, such as null or empty input, boundaries, error paths and large inputs, and to suggest assertions. Before refactoring legacy code, generate tests that capture current behavior, then run them again after. But generated tests can be shallow, and passing tests only prove what they check. So review the tests like any other code.`},
+ {t:'Security and performance help', v:{k:'cards',items:[{h:'Ask for a security review',p:'Injection, unsafe deserialization, hard-coded secrets, missing validation.'},{h:'Suggest fixes',p:'Safer APIs, parameterized queries, input validation, better error handling.'},{h:'Performance',p:'Spot inefficient loops and queries, propose optimizations, explain trade-offs.'},{h:'Not a replacement',p:'Keep code scanning, secret scanning and dependency checks in the pipeline.',w:1}]},
+  n:`Copilot can also help with security and performance. Ask it to review code for issues such as injection, unsafe deserialization, hard-coded secrets, or missing validation, and to suggest safer alternatives. Ask it to find inefficient loops or queries and propose optimizations, with trade-offs. But Copilot's answer is advice, not assurance. It does not replace code scanning, secret scanning, dependency checks or human review. If an option says Copilot said it is secure, so skip the security tooling, it is wrong.`}
+],
+quiz:[
+ {q:'A team will refactor a ten-year-old module and must preserve behavior. What is the best first Copilot-assisted step?',o:['Generate tests that capture current behavior','Accept all refactoring suggestions automatically','Delete old tests','Skip review because refactoring is safe'],a:[0],w:'Tests before and after give a safety net, and review still applies.'},
+ {q:'Which are appropriate uses of Copilot Chat on a legacy project? Select all that apply.',o:['Explain a complex algorithm in an unfamiliar class','Generate unit tests from provided source code','Brainstorm implementation ideas for a defined feature','Investigate a NullReferenceException using the error and relevant code','Treat a suggested fix as production-ready without testing'],a:[0,1,2,3],w:'Untested fixes are never production-ready.'},
+ {q:'Which are good targets when asking Copilot for edge-case tests? Select all that apply.',o:['Null or empty inputs','Boundary values','Error paths','Large inputs','Skipping assertions'],a:[0,1,2,3],w:'Assertions are the point of a test.'},
+ {q:'Copilot says a function is secure. May the team drop code scanning for it?',o:['Yes','No'],a:[1],w:'Copilot output is advice. Scanning and review stay in the pipeline.'},
+ {q:'Which documentation tasks suit Copilot? Select all that apply.',o:['Inline comments for complex logic','Function documentation with parameters and returns','README sections like installation and usage','Consistent terminology across docs','Guaranteeing documentation accuracy without review'],a:[0,1,2,3],w:'Drafts need human review for accuracy.'}
+]},
+/* ===== 9 ===== */
+{id:'m9', title:'Final review & exam day', w:'All domains', slides:[
+ {t:'The ten rules that win points', v:{k:'cards',items:[{h:'1 · Validate',p:'Test, scan and review every output. Never "trust".',w:1},{h:'2 · Humans accountable',p:'The AI is never the accountable party.',w:1},{h:'3 · Least privilege',p:'Minimal tools, data and permissions for agents and MCP.'},{h:'4 · Review commands',p:'Even with ghcs aliases and approved workflows.'},{h:'5 · Scope the prompt',p:'Method, error, constraints. Not the whole workspace.'},{h:'6 · Context beats magic',p:'Existing patterns and attached files shape results.'},{h:'7 · Exclusions for secrecy',p:'Content exclusions keep files out of context.'},{h:'8 · Filter for licensing',p:'Public code filter plus code referencing.'},{h:'9 · Business vs Enterprise',p:'Enterprise adds repo-aware and org knowledge.'},{h:'10 · Match feature to task',p:'See the next slide.'}]},
+  n:`Here are ten rules that win points. One: validate every output with tests, scanning and review. Two: people are accountable, never the A I. Three: least privilege for agents, tools and M C P. Four: review commands before they run, even with aliases. Five: scope prompts to the method, the error and the constraints. Six: context beats magic, so existing patterns and attached files shape results. Seven: content exclusions keep files out of context. Eight: the public code filter and code referencing handle licensing. Nine: Business versus Enterprise turns on repository-aware features. Ten: match the feature to the task.`},
+ {t:'Feature-to-task cheat map', v:{k:'table',head:['Task','Feature'],rows:[['Compare alternative implementations','Multiple Suggestions'],['Accept part of a suggestion','Partial acceptance'],['Edit selected code in place','Inline chat'],['Explain code, debug with context','Copilot Chat'],['Generate a command from English','gh copilot suggest'],['Understand an existing command','gh copilot explain'],['Reusable specialized assistant or prompt','Custom agent or prompt file'],['Multi-file, tool-using, iterative work','Agent mode'],['Issue to pull request in its own environment','Cloud agent'],['Controlled tool access for AI clients','GitHub MCP Server'],['Keep files out of context','Content exclusions'],['Block public-code matches','Public code filter'],['Automate seat management','REST API'],['Who changed what','Audit log events']]},
+  n:`This is your cheat map. Comparing alternatives: multiple suggestions. Taking part of a suggestion: partial acceptance. Editing selected code in place: inline chat. Explaining code or debugging with context: Copilot Chat. A command from plain English: suggest. Understanding an existing command: explain. A reusable specialized assistant or prompt: custom agent or prompt file. Multi-file, tool-using, iterative work: agent mode. Issue to pull request in its own environment: the cloud agent. Controlled tool access: the GitHub M C P Server. Keeping files out of context: content exclusions. Blocking public code matches: the public code filter. Automating seats: the REST A P I. Who changed what: audit log events.`},
+ {t:'Plan cheat sheet', v:{k:'table',head:['Requirement in the scenario','Plan'],rows:[['No-cost personal learning, limited usage','Free'],['Paid individual, higher limits','Pro'],['Top individual tier, most advanced models and agent features','Pro+'],['Centralized licenses, policies, security filtering, audit, IP commitment, no repo-aware need','Business'],['Business plus questions about internal repos, org knowledge, deeper GitHub integration','Enterprise']]},
+  cue:'"Minimum" and "best meets" matter. Pick the smallest plan that satisfies every stated requirement.',
+  n:`Plan questions follow a pattern. No cost, personal learning: Free. Paid individual: Pro. Top individual tier with the most advanced models and agent features: Pro plus. Centralized license management, governance, security filtering, audit and an I P commitment, with no need for repository-aware help: Business. Add questions about internal repositories, organization knowledge and deeper GitHub integration: Enterprise. Read for the words minimum and best meets. Pick the smallest plan that satisfies every stated requirement, and never choose an individual plan for an organization-wide rollout.`},
+ {t:'A study plan for a first-attempt pass', v:{k:'table',head:['Day','Focus'],rows:[['1','Exam briefing, Responsible AI. Quiz both.'],['2','Data & architecture, privacy and safeguards. Quiz both.'],['3','Prompt engineering. Write five prompts in your own repo.'],['4','Features I: IDE, plans. Try every shortcut.'],['5','Features II: agent mode, MCP, CLI. Run a real agent task.'],['6','Features III, productivity and testing.'],['7','Hands-on: tests, refactor, review a PR with Copilot.'],['8','Re-do every quiz, and redo what you missed.'],['9','Take a full-length timed practice exam.'],['10','Cheat map and plan sheet only. Rest.']]},
+  b:['Aim for steady scores above 80% on practice exams before you book.','Use Copilot for real: hands-on time makes scenario questions easy.'],
+  n:`Here is a ten-day plan. Days one and two cover responsible A I, data, and privacy. Day three, prompt engineering with real prompts. Days four through six cover features, productivity and testing, with hands-on practice. Day seven is a project in your own repository: tests, a refactor, and a pull request review with Copilot. Day eight, redo every quiz and review what you missed. Day nine, take a full timed practice exam. Day ten, read only the cheat map and plan sheet, then rest. Book the exam when your practice scores are steadily above eighty percent.`},
+ {t:'Exam day', v:{k:'cards',items:[{h:'Pace',p:'About 100 minutes for roughly 60–65 questions is under two minutes each. Flag and return.'},{h:'Read the stem twice',p:'Look for first, minimum, most appropriate, still required, select all.'},{h:'Eliminate absolutes',p:'Remove options with always, guarantees, unrestricted, or no review.'},{h:'Check each select-all option alone',p:'Judge every option independently against the principle.'},{h:'Reuse patterns',p:'Scope, least privilege, validate, match feature to task.'}]},
+  n:`On exam day, watch your pace. A hundred minutes for about sixty to sixty-five questions is under two minutes each, so flag hard ones and come back. Read every stem twice and look for qualifiers like first, minimum, most appropriate, still required, and select all. Eliminate options with absolutes such as always, guarantees, unrestricted, or no review. For select-all questions, judge each option on its own. And reuse the patterns you learned: narrow the scope, apply least privilege, validate output, and match the feature to the task. You are ready. Good luck.`}
+],
+quiz:[
+ {q:'A team builds a custom AI client that needs controlled access to selected GitHub capabilities, without hard-coding every GitHub operation and with central governance.',o:['GitHub MCP Server','Put repository credentials in prompts','Grant admin credentials to every client','Export repo data to local files'],a:[0],w:'MCP centralizes approved tools and capabilities.'},
+ {q:'Which are Enterprise capabilities beyond Business? Select all that apply.',o:['Assistance based on internal and private organizational code','Codebase-aware assistance and repository understanding','Organizational personalization and deeper GitHub integration','Guaranteed correctness of generated code'],a:[0,1,2],w:'No plan guarantees correctness.'},
+ {q:'An organization announces only "this company uses AI in software development" and claims full transparency. True or false?',o:['True','False'],a:[1],w:'Transparency needs capability and limitation documentation, validation results, logs and audit evidence.'},
+ {q:'A security team must keep proprietary algorithms and regulated customer data out of Copilot context. Which control category first?',o:['Content exclusions and privacy controls','Multiple Suggestions','IDE formatting','CLI explain'],a:[0],w:'Content exclusions keep specified content out of context.'},
+ {q:'A reviewer sees AI-generated tests that compile and pass. What should the reviewer require?',o:['Validation for correctness, security, edge cases and licensing before approval','Approval because tests pass','Rejection of all AI code','Approval if naming conventions are followed'],a:[0],w:'Passing tests do not guarantee correctness.'},
+ {q:'Select the statements that accurately align with Responsible AI.',o:['Reliability and safety: operate consistently and safely under expected conditions','Privacy and security: protect data and enforce access controls','Transparency: stakeholders can understand, review and audit','Fairness: reduce unjustified differential impacts','Accountability: the AI system itself is responsible for outcomes'],a:[0,1,2,3],w:'Accountability stays with people and organizations.'},
+ {q:'A prompt "Add support for expedited shipping" produced breaking changes. What first?',o:['Add the API contract, nearby code, expected behavior and constraints, and keep it focused','Remove the description','Upgrade the plan','Open every file in the repo'],a:[0],w:'Context is what was missing, but focused context.'},
+ {q:'Which describes the code suggestion lifecycle correctly?',o:['Context, prompt build, secure transmission, proxy filtering, model, post-processing, suggestion','Model, then context, then proxy','Post-processing before the model','Suggestion before context'],a:[0],w:'This is the order to remember.'},
+ {q:'The developer says the ghcs alias means commands need no review. True or false?',o:['True','False'],a:[1],w:'Review is still required before running commands.'},
+ {q:'Which makes agent tasks easier to govern? Select all that apply.',o:['Bounded scope and objectives','Review expectations before acceptance','Acceptance criteria','Limited permissions and tools','Authority to change anything'],a:[0,1,2,3],w:'Least privilege.'}
+]}
+];
+
+/* ---------- state ---------- */
+const S = Object.assign({mi:0, si:0, playing:false, rate:1, voice:'', voiceOn:true, seen:{}, scores:{}}, store.get());
+S.playing = false;
+const tokenBox = {t:0};
+let sentences = [], sIdx = 0, timer = null;
+let voices = [];
+
+const mod = () => MODS[S.mi];
+const slides = () => mod().slides;
+const isQuiz = () => S.si >= slides().length;
+const totalSlides = MODS.reduce((n,m)=>n+m.slides.length,0);
+const key = (mi,si) => MODS[mi].id+':'+si;
+const save = () => store.set({mi:S.mi, si:S.si, rate:S.rate, voice:S.voice, voiceOn:S.voiceOn, seen:S.seen, scores:S.scores});
+
+/* ---------- speech ---------- */
+const PRON = [[/GH-300/g,'G H three hundred'],[/\bAI\b/g,'A I'],[/\bMCP\b/g,'M C P'],[/\bCLI\b/g,'C L I'],[/\bIDEs?\b/g,'I D E'],[/\bLLMs?\b/g,'L L M'],[/\bAPI\b/g,'A P I'],[/\bCI\b/g,'C I'],[/\bIP\b/g,'I P'],[/\bPR\b/g,'P R']];
+const sp = t => PRON.reduce((s,[r,v])=>s.replace(r,v), t);
+const splitSentences = t => (t.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g) || [t]).map(s=>s.trim()).filter(Boolean);
+const canSpeak = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+
+function loadVoices(){
+  if(!canSpeak) return;
+  voices = speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));
+  const sel = $('#voice');
+  if(!voices.length){ sel.innerHTML = '<option>Default voice</option>'; return; }
+  const pref = v => /natural|neural|online/i.test(v.name)?0:/google us|samantha|aria|jenny|ava|daniel|serena/i.test(v.name)?1:2;
+  voices.sort((a,b)=>pref(a)-pref(b)||a.name.localeCompare(b.name));
+  sel.innerHTML = voices.map(v=>`<option value="${esc(v.voiceURI)}">${esc(v.name)}</option>`).join('');
+  if(!voices.some(v=>v.voiceURI===S.voice)) S.voice = voices[0].voiceURI;
+  sel.value = S.voice;
+}
+
+function stopSpeech(){
+  tokenBox.t++; clearTimeout(timer); timer = null;
+  if(canSpeak) speechSynthesis.cancel();
+}
+
+function markSentence(i){
+  document.querySelectorAll('.cap .s').forEach((el,k)=>el.classList.toggle('on', k===i));
+}
+
+function speakFrom(i){
+  const my = ++tokenBox.t; clearTimeout(timer);
+  if(canSpeak) speechSynthesis.cancel();
+  sIdx = i;
+  const next = () => {
+    if(my !== tokenBox.t || !S.playing) return;
+    if(sIdx >= sentences.length){ markSentence(-1); slideDone(); return; }
+    const text = sentences[sIdx]; markSentence(sIdx);
+    const done = () => { if(my !== tokenBox.t) return; sIdx++; next(); };
+    if(S.voiceOn && canSpeak){
+      const u = new SpeechSynthesisUtterance(sp(text));
+      u.rate = S.rate; const v = voices.find(v=>v.voiceURI===S.voice); if(v){ u.voice = v; u.lang = v.lang; }
+      u.onend = done; u.onerror = e => { if(e.error==='interrupted'||e.error==='canceled') return; done(); };
+      setTimeout(()=>{ if(my===tokenBox.t) speechSynthesis.speak(u); }, 40);
+    } else {
+      const words = text.split(/\s+/).length; timer = setTimeout(done, Math.max(1200, words/(2.6*S.rate)*1000));
+    }
+  };
+  next();
+}
+
+function slideDone(){
+  S.seen[key(S.mi,S.si)] = 1; save(); paintProgress();
+  if(S.si < slides().length-1){ S.si++; renderStage(); speakFrom(0); }
+  else { S.si = slides().length; S.playing = false; renderStage(); setPlayUI(); }
+}
+
+/* ---------- rendering ---------- */
+function paintProgress(){
+  const n = Object.keys(S.seen).length, pct = Math.round(100*n/totalSlides);
+  $('#pct').textContent = pct+'%'; $('#pbar').style.width = pct+'%';
+}
+function renderNav(){
+  $('#nav').innerHTML = MODS.map((m,i)=>{
+    const done = m.slides.every((_,k)=>S.seen[key(i,k)]);
+    const sub = i===S.mi ? `<div class="subs">${m.slides.map((s,k)=>`<button class="sub ${S.seen[key(i,k)]?'seen':''}" data-go="${i}:${k}" ${k===S.si?'aria-current="true"':''}>${esc(s.t)}</button>`).join('')}${m.quiz?`<button class="sub ${S.scores[m.id]!=null?'seen':''}" data-go="${i}:${m.slides.length}" ${isQuiz()?'aria-current="true"':''}>Check yourself${S.scores[m.id]!=null?' ('+S.scores[m.id]+'%)':''}</button>`:''}</div>`:'';
+    return `<div><button class="mod ${done?'done':''}" data-go="${i}:0" ${i===S.mi?'aria-current="true"':''}><span class="n"><span>${i===0?'Intro':'Module '+i}</span><span>${m.w}</span></span><span class="t">${esc(m.title)}</span></button>${sub}</div>`;
+  }).join('');
+}
+function renderStage(){
+  renderNav();
+  const m = mod(), st = $('#stage');
+  if(isQuiz()){ renderQuiz(st); }
+  else {
+    const s = slides()[S.si];
+    sentences = splitSentences(s.n);
+    st.innerHTML = `<div class="eyebrow"><span>${i18(m)}</span><span class="w">${m.w}</span><span>Slide ${S.si+1} of ${m.slides.length}</span></div>
+      <h2>${esc(s.t)}</h2>
+      <div class="viz">${vizHTML(s.v)}</div>
+      ${s.b?`<ul class="pts">${s.b.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}
+      ${s.cue?`<div class="cue"><b>Exam cue</b>${s.cue}</div>`:''}
+      <div class="cap"><div class="h"><span>Narration</span><span>${sentences.length} sentences</span></div><p>${sentences.map((x,k)=>`<span class="s" data-s="${k}">${esc(x)} </span>`).join('')}</p></div>`;
+  }
+  $('#now').textContent = `${m.title} · ${isQuiz()?'Check yourself':slides()[S.si].t}`;
+  save(); paintProgress(); setPlayUI();
+}
+const i18 = m => MODS.indexOf(m)===0 ? 'Exam briefing' : 'Module '+MODS.indexOf(m);
+
+function renderQuiz(st){
+  const m = mod();
+  st.innerHTML = `<div class="eyebrow"><span>${i18(m)}</span><span class="w">Check yourself</span><span>${m.quiz.length} questions</span></div>
+    <h2>${esc(m.title)}: quick check</h2>
+    <p style="color:var(--muted);margin:0 0 16px">Exam style. Questions marked "select all" have more than one correct answer.</p>
+    <form id="qf">${m.quiz.map((q,qi)=>{const multi=q.a.length>1;return `<fieldset class="q" id="q${qi}" style="margin-inline:0"><div class="kind">${multi?'Select all that apply':'Select one'}</div><h3>${qi+1}. ${esc(q.q)}</h3>${q.o.map((o,oi)=>`<label class="opt" id="o${qi}-${oi}"><input type="${multi?'checkbox':'radio'}" name="q${qi}" value="${oi}" id="i${qi}-${oi}"><span>${esc(o)}</span></label>`).join('')}<div class="why"><span class="verdict"></span> ${esc(q.w)}</div></fieldset>`}).join('')}</form>
+    <div class="actions"><button class="btn pri" id="check">Check answers</button><button class="btn" id="retry" hidden>Try again</button><span class="score" id="score"></span>${S.mi<MODS.length-1?'<button class="btn" id="nextmod">Next module →</button>':''}</div>`;
+  $('#check').onclick = checkQuiz; $('#retry').onclick = () => renderStage();
+  const nm = $('#nextmod'); if(nm) nm.onclick = () => go(S.mi+1,0,true);
+}
+function checkQuiz(){
+  const m = mod(); let right = 0;
+  m.quiz.forEach((q,qi)=>{
+    const picked = q.o.map((_,oi)=>$('#i'+qi+'-'+oi).checked);
+    const ok = q.o.every((_,oi)=>picked[oi]===q.a.includes(oi));
+    if(ok) right++;
+    q.o.forEach((_,oi)=>{const el=$('#o'+qi+'-'+oi); el.classList.remove('ok','no'); if(q.a.includes(oi)) el.classList.add('ok'); else if(picked[oi]) el.classList.add('no'); $('#i'+qi+'-'+oi).disabled=true;});
+    const box=$('#q'+qi); box.classList.add('checked',ok?'right':'wrong'); box.querySelector('.verdict').textContent = ok?'Correct.':'Not quite.';
+  });
+  const pct = Math.round(100*right/m.quiz.length);
+  $('#score').textContent = `${right} / ${m.quiz.length} · ${pct}%`;
+  $('#check').hidden = true; $('#retry').hidden = false;
+  S.scores[m.id] = pct; save(); renderNav();
+}
+
+/* ---------- navigation and playback ---------- */
+function go(mi,si,autoplay){
+  const was = S.playing;
+  stopSpeech(); S.mi = mi; S.si = si; renderStage(); window.scrollTo({top:0,behavior:'smooth'});
+  if(autoplay || was){ if(!isQuiz()){ S.playing = true; setPlayUI(); speakFrom(0);} else { S.playing=false; setPlayUI(); } }
+}
+function step(d){
+  let mi=S.mi, si=S.si+d;
+  const m = MODS[mi];
+  const last = m.slides.length + (m.quiz?0:-1);
+  if(si<0){ if(mi>0){ mi--; si = MODS[mi].slides.length-1; } else si=0; }
+  else if(si>last){ if(mi<MODS.length-1){ mi++; si=0; } else si=last; }
+  S.seen[key(S.mi,S.si)] = S.si<slides().length ? 1 : S.seen[key(S.mi,S.si)];
+  go(mi,si,false);
+}
+function setPlayUI(){
+  const b = $('#play'); b.textContent = S.playing ? '❚❚ Pause' : (isQuiz() ? '▶ Replay module' : '▶ Play narration');
+  b.setAttribute('aria-pressed', S.playing);
+}
+function toggle(){
+  if(S.playing){ S.playing=false; stopSpeech(); setPlayUI(); return; }
+  if(isQuiz()){ go(S.mi,0,true); return; }
+  S.playing = true; setPlayUI(); speakFrom(0);
+}
+
+document.addEventListener('click', e=>{
+  const g = e.target.closest('[data-go]'); if(g){ const [a,b]=g.dataset.go.split(':').map(Number); go(a,b,false); return; }
+  const sEl = e.target.closest('.cap .s'); if(sEl && S.playing){ speakFrom(+sEl.dataset.s); }
+});
+$('#play').onclick = toggle;
+$('#prev').onclick = () => step(-1);
+$('#next').onclick = () => step(1);
+$('#rate').onchange = e => { S.rate = +e.target.value; save(); if(S.playing) speakFrom(sIdx); };
+$('#voice').onchange = e => { S.voice = e.target.value; save(); if(S.playing) speakFrom(sIdx); };
+$('#voiceOn').onchange = e => { S.voiceOn = e.target.checked; save(); if(S.playing) speakFrom(sIdx); };
+document.addEventListener('keydown', e=>{
+  if(/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  if(e.key===' '){ e.preventDefault(); toggle(); }
+  else if(e.key==='ArrowRight') step(1); else if(e.key==='ArrowLeft') step(-1);
+});
+
+/* ---------- boot ---------- */
+if(S.mi>=MODS.length || S.mi<0) S.mi=0;
+if(S.si<0 || S.si>MODS[S.mi].slides.length) S.si=0;
+$('#rate').value = String(S.rate); if(![...$('#rate').options].some(o=>o.value===String(S.rate))) $('#rate').value='1';
+$('#voiceOn').checked = S.voiceOn;
+if(canSpeak){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+else { $('#voice').innerHTML='<option>Not supported</option>'; $('#voice').disabled=true; $('#voiceOn').checked=false; S.voiceOn=false; $('#voiceOn').disabled=true; }
+renderStage();
+window.addEventListener('pagehide', stopSpeech);
+</script>
+
+</body></html>
